@@ -3,9 +3,6 @@ import Footer from '@/components/WebSite/Footer/Footer';
 import HeroSection from '@/components/WebSite/HeroSection/HeroSection';
 import Category from '@/components/WebSite/Category/Category';
 import FeaturedProducts from '@/components/WebSite/Featured/Products';
-import MidSectionBanner from '@/components/WebSite/Featured/MidSectionBanner';
-import MidSectionBanner2 from '@/components/WebSite/Featured/MidSectionBanner2';
-import MidSectionBanner3 from '@/components/WebSite/Featured/MidSectionBanner3';
 import TopSelling from '@/components/WebSite/Featured/TopSelling';
 import BestSeller from '@/components/WebSite/Featured/BestSeller';
 import ValueSection from '@/components/WebSite/Footer/ValueSection';
@@ -17,11 +14,8 @@ export default function Home() {
       <HeroSection />
       <Category />
       <FeaturedProducts />
-      {/* <MidSectionBanner /> */}
       <TopSelling />
-      {/* <MidSectionBanner2 /> */}
       <BestSeller />
-      {/* <MidSectionBanner3 /> */}
       <ValueSection />
       <Footer />
       <div className="flex justify-center gap-4 py-8 font-sans">
