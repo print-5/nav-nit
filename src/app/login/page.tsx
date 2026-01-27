@@ -1,4 +1,4 @@
-import Login from '@/components/AdminDashboard/Login/Login'
+import Login from '@/components/WebSite/LoginRegister/LoginRegister'
 
 export default function LoginPage()
 {

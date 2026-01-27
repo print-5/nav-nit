@@ -8,7 +8,6 @@ import {
   Search,
   ShoppingCart,
   Menu,
-  Heart,
   Globe,
   ChevronDown,
   X,
@@ -94,56 +93,46 @@ const Header = () => {
 
   return (
     <div className="sticky top-0 z-50 font-sans">
-         {/* Top Section */}
+      {/* Top Section */}
       <div className="h-8 sm:h-10 md:h-12 bg-[#222222] flex items-center justify-center px-2 sm:px-4">
         <p className="text-white text-xs sm:text-sm md:text-base font-medium text-center px-2">
           Bath Towel Collection on 50% off
         </p>
       </div>
+      
       {/* Main Header */}
       <header className="bg-white shadow-lg border-b border-gray-100 transition-all duration-300">
         <div className="max-w-7xl 2xl:max-w-420 mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-18 md:h-20 lg:h-22 gap-2 sm:gap-3 md:gap-4">
-            {/* Section 1: Logo */}
-            <div className="flex justify-start shrink-0">
+          <div className="flex items-center h-16 sm:h-18 md:h-20 xl:h-28 gap-2 sm:gap-3 md:gap-4">
+            
+            {/* Section 1: Logo (30% on desktop, 50% on mobile/tablet) */}
+            <div className="w-[50%] md:w-[30%] flex justify-start shrink-0">
               <Link href="/" className="flex items-center">
                 <Image
                   src="/assets/logo/logo2.png"
                   alt="Company Logo"
-                  width={120}
-                  height={80}
-                  sizes="(max-width: 640px) 32px, (max-width: 768px) 40px, (max-width: 1024px) 48px, (max-width: 1280px) 64px, 80px"
-                  className="h-8 sm:h-10 md:h-12 lg:h-16 xl:h-20 w-auto object-contain"
+                  width={200}
+                  height={100}
+                  sizes="(max-width: 640px) 32px, (max-width: 768px) 40px, (max-width: 1024px) 56px, (max-width: 1280px) 80px, 120px"
+                  className="h-8 sm:h-10 md:h-14 lg:h-20 xl:h-24 w-auto object-contain"
                   priority
-                  style={{ width: 'auto', height: 'auto' }}
                 />
               </Link>
             </div>
 
-            {/* Section 2: Company Name (Center) */}
-            <div className="hidden sm:flex justify-center flex-1 px-1 sm:px-2 lg:px-4">
+            {/* Section 2: Company Name (40% on desktop, hidden on mobile/tablet) */}
+            <div className="hidden md:flex w-[40%] justify-center px-1 sm:px-2 lg:px-4">
               <Link href="/" className="flex items-center">
                 <div className="text-center">
                   <h1 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold bg-linear-to-r from-[#212121] to-[#222222] bg-clip-text text-transparent leading-tight line-clamp-2">
-                    M2C MarkDowns Private Limited
+                    M 2 C MarkDowns Private Limited
                   </h1>
                 </div>
               </Link>
             </div>
 
-            {/* Section 3: Action Icons */}
-            <div className="flex items-center justify-end gap-1 sm:gap-2 md:gap-3 shrink-0">
-              {/* Wishlist */}
-              <Link
-                href="/wishlist"
-                className="relative p-1.5 sm:p-2 text-[#222222] hover:text-white hover:bg-[#212121] rounded-lg transition-all duration-200 transform hover:scale-105"
-              >
-                <Heart className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-                <span className="absolute -top-1 -right-1 sm:-top-1.5 sm:-right-1.5 bg-[#212121] text-white rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center font-medium text-xs">
-                  0
-                </span>
-              </Link>
-
+            {/* Section 3: Action Icons (30% on desktop, 50% on mobile/tablet) */}
+            <div className="w-[50%] md:w-[30%] flex items-center justify-end gap-1 sm:gap-2 md:gap-3 shrink-0">
               {/* Cart */}
               <Link
                 href="/cart"
@@ -337,16 +326,14 @@ const Header = () => {
                         <span>My Orders</span>
                       </Link>
                       <hr className="my-2 border-slate-100" />
-                      <button
-                        onClick={() => {
-                          setShowAccountDropdown(false);
-                          // Add logout logic here
-                        }}
+                      <Link
+                        href="/login"
                         className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-700 transition-all duration-150 text-left font-medium"
+                        onClick={() => setShowAccountDropdown(false)}
                       >
-                        <X className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span>Logout</span>
-                      </button>
+                        <User className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span>Login</span>
+                      </Link>
                     </div>
                   </div>
                 )}
@@ -395,6 +382,7 @@ const Header = () => {
               >
                 Products
               </Link>
+              
               <Link
                 href="/about"
                 className={`block px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
@@ -406,6 +394,7 @@ const Header = () => {
               >
                 About
               </Link>
+              
               <Link
                 href="/contact"
                 className={`block px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
@@ -417,6 +406,7 @@ const Header = () => {
               >
                 Contact
               </Link>
+              
               <Link
                 href="/order"
                 className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
@@ -442,6 +432,15 @@ const Header = () => {
               >
                 <IconUserFilled className="w-4 h-4" />
                 My Account
+              </Link>
+              
+              <Link
+                href="/login"
+                className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 text-slate-700 hover:bg-slate-100 hover:text-gray-600 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <User className="w-4 h-4" />
+                Login
               </Link>
             </div>
           </div>

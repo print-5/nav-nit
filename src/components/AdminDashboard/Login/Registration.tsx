@@ -252,20 +252,21 @@ export default function AdminRegistration() {
                 </div>
               </div>
             </div>
-
-            {/* Registration Benefits */}
-            <div className="grid grid-cols-1 gap-4 text-center">
-              <div className="bg-white/20 backdrop-blur-md rounded-lg p-6 transition-all duration-300 hover:bg-white/25 hover:shadow-lg hover:scale-[1.02] cursor-default">
-                <div className="text-2xl font-bold text-white mb-2">✓ Instant Approval</div>
-                <div className="text-sm text-white/80 font-medium">Get started immediately after registration</div>
-              </div>
-              <div className="bg-white/20 backdrop-blur-md rounded-lg p-6 transition-all duration-300 hover:bg-white/25 hover:shadow-lg hover:scale-[1.02] cursor-default">
-                <div className="text-2xl font-bold text-white mb-2">✓ Full Training</div>
-                <div className="text-sm text-white/80 font-medium">Comprehensive onboarding program</div>
-              </div>
-              <div className="bg-white/20 backdrop-blur-md rounded-lg p-6 transition-all duration-300 hover:bg-white/25 hover:shadow-lg hover:scale-[1.02] cursor-default">
-                <div className="text-2xl font-bold text-white mb-2">✓ 24/7 Support</div>
-                <div className="text-sm text-white/80 font-medium">Always available technical assistance</div>
+            <div className="pt-8 border-t border-white/20">
+              <h3 className="text-lg font-semibold text-white mb-4">Why Choose Us?</h3>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                  <TrendingUp className="w-6 h-6 text-white mx-auto mb-2" />
+                  <div className="text-white font-semibold">Growth</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                  <Settings className="w-6 h-6 text-white mx-auto mb-2" />
+                  <div className="text-white font-semibold">Control</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                  <BarChart3 className="w-6 h-6 text-white mx-auto mb-2" />
+                  <div className="text-white font-semibold">Analytics</div>
+                </div>
               </div>
             </div>
           </div>

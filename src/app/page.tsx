@@ -18,8 +18,8 @@ export default function Home() {
       <BestSeller />
       <ValueSection />
       <Footer />
-      <div className="flex justify-center gap-4 py-8 font-sans">
-        <a href="/dashboard" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 justify-center gap-4 py-8 m-8">
+        <a href="/admin/dashboard" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
           Dashboard
         </a>
         <a href="/vendor/dashboard" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition-colors">

@@ -23,37 +23,37 @@ import {
 const sidebarItems = [
   {
     title: 'Dashboard',
-    href: '/dashboard',
+    href: 'admin/dashboard',
     icon: LayoutDashboard,
   },
   {
     title: 'Vendors',
-    href: '/dashboard/vendors',
+    href: 'admin/dashboard/vendors',
     icon: Store,
   },
   {
     title: 'Products',
-    href: '/dashboard/products',
+    href: 'admin/dashboard/products',
     icon: Package,
   },
   {
     title: 'Inventory',
-    href: '/dashboard/inventory',
+    href: 'admin/dashboard/inventory',
     icon: Warehouse,
   },
   {
     title: 'Orders',
-    href: '/dashboard/orders',
+    href: 'admin/dashboard/orders',
     icon: ShoppingCart,
   },
   {
     title: 'Invoice & Billing',
-    href: '/dashboard/billing',
+    href: 'admin/dashboard/billing',
     icon: Receipt,
   },
   {
     title: 'Categories',
-    href: '/dashboard/categories',
+    href: 'admin/dashboard/categories',
     icon: Tags,
   },
   {
@@ -63,27 +63,27 @@ const sidebarItems = [
   },
   {
     title: 'Content Management',
-    href: '/dashboard/cms',
+    href: 'admin/dashboard/cms',
     icon: Edit3,
   },
   {
     title: 'Reviews',
-    href: '/dashboard/reviews',
+    href: 'admin/dashboard/reviews',
     icon: MessageSquare,
   },
   {
     title: 'Reports',
-    href: '/dashboard/reports',
+    href: 'admin/dashboard/reports',
     icon: FileText,
   },
   {
     title: 'Admin Management',
-    href: '/dashboard/admins',
+    href: 'admin/dashboard/admins',
     icon: Shield,
   },
   {
     title: 'Settings',
-    href: '/dashboard/settings',
+    href: 'admin/dashboard/settings',
     icon: Settings,
   },
 ]
