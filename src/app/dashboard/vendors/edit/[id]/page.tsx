@@ -1,11 +1,13 @@
+import { use } from 'react'
 import AddEditVendor from '@/components/AdminDashboard/Vendors/AddEditVendor'
 
 interface EditVendorPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function EditVendorPage({ params }: EditVendorPageProps) {
-  return <AddEditVendor vendorId={params.id} mode="edit" />
+  const { id } = use(params)
+  return <AddEditVendor vendorId={id} mode="edit" />
 }

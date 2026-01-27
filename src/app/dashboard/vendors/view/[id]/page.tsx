@@ -1,11 +1,13 @@
+import { use } from 'react'
 import VendorView from '@/components/AdminDashboard/Vendors/VendorView'
 
 interface ViewVendorPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function ViewVendorPage({ params }: ViewVendorPageProps) {
-  return <VendorView vendorId={params.id} />
+  const { id } = use(params)
+  return <VendorView vendorId={id} />
 }

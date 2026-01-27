@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import Breadcrumb from '../Navigation/Breadcrumb';
 import LoadingSpinner from '@/components/UI/LoadingSpinner';
 import { products, Product } from '@/components/mockData/products';
 import { Star, Heart, Truck, Shield, RotateCcw } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { showSuccessToast, showErrorToast } from '@/lib/toast-utils';
 
 interface ProductDetailProps {
   productId: string;
@@ -80,13 +81,60 @@ const ProductDetail = ({ productId }: ProductDetailProps) => {
   };
 
   const handleAddToCart = () => {
-    console.log(`Added ${product.name} (${selectedSize}) to cart`);
-    alert(`Added ${product.name} (${selectedSize}) to cart!`);
+    if (!product) return;
+    
+    try {
+      // Add to cart logic here
+      console.log(`Added ${product.name} (${selectedSize}) to cart`);
+      
+      showSuccessToast(
+        'Added to Cart!', 
+        `${product.name} (${selectedSize}) has been added to your cart.`
+      );
+    } catch (error) {
+      showErrorToast('Failed to Add', 'Unable to add item to cart. Please try again.');
+    }
   };
 
   const handleBuyNow = () => {
-    console.log(`Buy now ${product.name} (${selectedSize})`);
-    alert(`Proceeding to checkout with ${product.name} (${selectedSize})!`);
+    if (!product) return;
+    
+    try {
+      // Buy now logic here
+      console.log(`Buy now ${product.name} (${selectedSize})`);
+      
+      showSuccessToast(
+        'Proceeding to Checkout', 
+        `Taking you to checkout with ${product.name} (${selectedSize}).`
+      );
+      
+      // Redirect to checkout page
+      // window.location.href = '/checkout';
+    } catch (error) {
+      showErrorToast('Checkout Failed', 'Unable to proceed to checkout. Please try again.');
+    }
+  };
+
+  const handleWishlistToggle = () => {
+    if (!product) return;
+    
+    try {
+      setIsWishlisted(!isWishlisted);
+      
+      if (!isWishlisted) {
+        showSuccessToast(
+          'Added to Wishlist!', 
+          `${product.name} has been saved to your wishlist.`
+        );
+      } else {
+        showSuccessToast(
+          'Removed from Wishlist', 
+          `${product.name} has been removed from your wishlist.`
+        );
+      }
+    } catch (error) {
+      showErrorToast('Wishlist Error', 'Unable to update wishlist. Please try again.');
+    }
   };
 
   const renderStars = (rating: number) => {
@@ -220,7 +268,7 @@ const ProductDetail = ({ productId }: ProductDetailProps) => {
                         <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3 leading-tight">{product.name}</h1>
                       </div>
                       <button 
-                        onClick={() => setIsWishlisted(!isWishlisted)}
+                        onClick={handleWishlistToggle}
                         className="p-3 rounded-full bg-gray-50 hover:bg-gray-100 transition-colors"
                       >
                         <Heart className={`w-6 h-6 ${isWishlisted ? 'fill-current text-gray-500' : 'text-gray-400'}`} />

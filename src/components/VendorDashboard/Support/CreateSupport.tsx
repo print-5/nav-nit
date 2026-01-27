@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ArrowLeft, Send, Paperclip } from 'lucide-react'
 import Link from 'next/link'
+import { showSuccessToast, showErrorToast } from '@/lib/toast-utils'
 
 export default function CreateSupport() {
   const [formData, setFormData] = useState({
@@ -55,9 +56,9 @@ export default function CreateSupport() {
         attachments: []
       })
       
-      alert('Ticket created successfully!')
+      showSuccessToast('Ticket Created!', 'Your support ticket has been submitted successfully.')
     } catch (error) {
-      alert('Failed to create ticket. Please try again.')
+      showErrorToast('Submission Failed', 'Failed to create ticket. Please try again.')
     } finally {
       setIsSubmitting(false)
     }

@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card'
 import { ArrowLeft, Save, X, Upload } from 'lucide-react'
 import Link from 'next/link'
 import { categories } from '@/components/mockData/products'
+import { useToast } from '@/hooks/use-toast'
+import { showSuccessToast, showErrorToast, showWarningToast } from '@/lib/toast-utils'
 
 // Mock data for categories and subcategories
 const categorySubcategories: Record<string, string[]> = {
@@ -63,8 +65,18 @@ interface ProductFormData {
   category: string
   subCategory: string
   
+  // Pricing Information
+  basePrice: number
+  originalPrice?: number
+  discount?: number // Discount percentage (e.g., 25 for 25% off)
+  
+  // Product Rating & Reviews (for display/reference)
+  rating?: number
+  reviews?: number
+  
   // Fabric & Specifications
   fabricType: string
+  material: string // Main material description (e.g., "100% Organic Cotton")
   fabricSpecifications: FabricSpecification
   
   // Variants Management
@@ -72,7 +84,6 @@ interface ProductFormData {
   hasVariants: boolean
   
   // Base Product Info (when no variants)
-  basePrice: number
   baseSku: string
   
   // Images
@@ -113,6 +124,7 @@ interface AddEditProductProps {
 
 export default function AddEditProduct({ productId, isEdit = false }: AddEditProductProps) {
   const router = useRouter()
+  const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingData, setIsLoadingData] = useState(isEdit)
   
@@ -122,8 +134,18 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
     category: '',
     subCategory: '',
     
+    // Pricing Information
+    basePrice: 0,
+    originalPrice: undefined,
+    discount: undefined,
+    
+    // Product Rating & Reviews
+    rating: undefined,
+    reviews: undefined,
+    
     // Fabric & Specifications
     fabricType: '',
+    material: '',
     fabricSpecifications: {
       type: '',
       composition: '',
@@ -138,7 +160,6 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
     hasVariants: false,
     
     // Base Product Info
-    basePrice: 0,
     baseSku: '',
     
     // Images
@@ -175,6 +196,26 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
   const [newTag, setNewTag] = useState('')
   const [newCareInstruction, setNewCareInstruction] = useState('')
   const [activeTab, setActiveTab] = useState('basic')
+  // Auto-save functionality (optional)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+
+  useEffect(() => {
+    setHasUnsavedChanges(true)
+  }, [formData])
+
+  // Warn user about unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [hasUnsavedChanges])
+
   const [newVariant, setNewVariant] = useState<Partial<ProductVariant>>({
     size: '',
     color: '',
@@ -202,7 +243,17 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
             category: categories[0],
             subCategory: 'Cotton Sheets',
             
+            // Pricing Information
+            basePrice: 89.99,
+            originalPrice: 99.99,
+            discount: 10,
+            
+            // Product Rating & Reviews
+            rating: 4.5,
+            reviews: 128,
+            
             fabricType: 'Cotton',
+            material: '100% Organic Cotton',
             fabricSpecifications: {
               type: 'Cotton',
               composition: '100% Cotton',
@@ -234,7 +285,6 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
             ],
             hasVariants: true,
             
-            basePrice: 89.99,
             baseSku: 'CS-001',
             
             images: [],
@@ -267,6 +317,7 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
           })
         } catch (error) {
           console.error('Error loading product data:', error)
+          showErrorToast('Failed to Load Product', 'Unable to load product data. Please try again.')
         } finally {
           setIsLoadingData(false)
         }
@@ -409,6 +460,62 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
     }
   }
 
+  // Image handling functions
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files) return
+
+    Array.from(files).forEach((file) => {
+      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        showWarningToast('File Too Large', `${file.name} is larger than 10MB`)
+        return
+      }
+
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const newImage: ProductImage = {
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          url: event.target?.result as string,
+          alt: file.name,
+          isPrimary: formData.images.length === 0 // First image is primary
+        }
+
+        setFormData(prev => ({
+          ...prev,
+          images: [...prev.images, newImage]
+        }))
+      }
+      reader.readAsDataURL(file)
+    })
+
+    // Reset input
+    e.target.value = ''
+  }
+
+  const setPrimaryImage = (imageId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.map(img => ({
+        ...img,
+        isPrimary: img.id === imageId
+      }))
+    }))
+  }
+
+  const removeImage = (imageId: string) => {
+    setFormData(prev => {
+      const updatedImages = prev.images.filter(img => img.id !== imageId)
+      // If we removed the primary image, make the first remaining image primary
+      if (updatedImages.length > 0 && !updatedImages.some(img => img.isPrimary)) {
+        updatedImages[0].isPrimary = true
+      }
+      return {
+        ...prev,
+        images: updatedImages
+      }
+    })
+  }
+
   const removeTag = (tag: string) => {
     setFormData(prev => ({
       ...prev,
@@ -416,26 +523,66 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
     }))
   }
 
+  const handleSaveDraft = async () => {
+    setIsLoading(true)
+    try {
+      // Save as draft
+      console.log('Saving draft:', formData)
+      showSuccessToast('Draft Saved', 'Your product draft has been saved.')
+      setHasUnsavedChanges(false)
+    } catch (error) {
+      showErrorToast('Save Failed', 'Unable to save draft.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Basic validation
+    if (!formData.name.trim()) {
+      showErrorToast('Validation Error', 'Product name is required.')
+      return
+    }
+    
+    if (!formData.category) {
+      showErrorToast('Validation Error', 'Please select a category.')
+      return
+    }
+    
+    if (!formData.hasVariants && formData.basePrice <= 0) {
+      showErrorToast('Validation Error', 'Please enter a valid base price.')
+      return
+    }
+    
+    if (formData.hasVariants && formData.variants.length === 0) {
+      showErrorToast('Validation Error', 'Please add at least one variant or disable variants.')
+      return
+    }
+
     setIsLoading(true)
 
     try {
       if (isEdit) {
         console.log('Updating product:', productId, formData)
         // API call: PUT /api/products/${productId}
+        showSuccessToast('Product Updated', 'Your product has been updated successfully.')
       } else {
         console.log('Creating product:', formData)
         // API call: POST /api/products
+        showSuccessToast('Product Created', 'Your product has been created successfully.')
       }
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       // Redirect back to products list
-      router.push('/dashboard/products')
+      router.push('/vendor/dashboard/products')
+      setHasUnsavedChanges(false)
     } catch (error) {
       console.error('Error saving product:', error)
+      showErrorToast('Save Failed', 'Unable to save product. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -447,7 +594,7 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Link href="/dashboard/products">
+            <Link href="/vendor/dashboard/products">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Products
@@ -702,6 +849,20 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
                         </option>
                       ))}
                     </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Material Description
+                    </label>
+                    <input
+                      type="text"
+                      name="material"
+                      value={formData.material}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-700 focus:border-transparent"
+                      placeholder="e.g., 100% Organic Cotton"
+                    />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1269,7 +1430,10 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer">
+                  <div 
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                    onClick={() => document.getElementById('image-upload')?.click()}
+                  >
                     <Upload className="mx-auto h-12 w-12 text-gray-400" />
                     <p className="mt-2 text-sm text-gray-600">
                       Click to upload or drag and drop
@@ -1278,36 +1442,38 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
                       PNG, JPG, GIF up to 10MB
                     </p>
                     <input
+                      id="image-upload"
                       type="file"
                       multiple
                       accept="image/*"
                       className="hidden"
-                      onChange={(e) => {
-                        // Handle image upload logic here
-                        console.log('Files selected:', e.target.files)
-                      }}
+                      onChange={handleImageUpload}
                     />
                   </div>
                   
                   {/* Image Preview Grid */}
                   {formData.images.length > 0 && (
                     <div className="grid grid-cols-2 gap-2">
-                      {formData.images.map((image, index) => (
+                      {formData.images.map((image) => (
                         <div key={image.id} className="relative group">
                           <img
                             src={image.url}
                             alt={image.alt}
                             className="w-full h-20 object-cover rounded border"
                           />
-                          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded flex items-center justify-center">
+                          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded flex items-center justify-center gap-2">
+                            {!image.isPrimary && (
+                              <button
+                                type="button"
+                                onClick={() => setPrimaryImage(image.id)}
+                                className="text-white text-xs bg-blue-600 px-2 py-1 rounded hover:bg-blue-700"
+                              >
+                                Set Primary
+                              </button>
+                            )}
                             <button
                               type="button"
-                              onClick={() => {
-                                setFormData(prev => ({
-                                  ...prev,
-                                  images: prev.images.filter((_, i) => i !== index)
-                                }))
-                              }}
+                              onClick={() => removeImage(image.id)}
                               className="text-white hover:text-red-300"
                             >
                               <X className="h-4 w-4" />
@@ -1379,11 +1545,30 @@ export default function AddEditProduct({ productId, isEdit = false }: AddEditPro
                   <Save className="h-4 w-4 mr-2" />
                   {isLoading ? 'Saving...' : (isEdit ? 'Update Product' : 'Create Product')}
                 </Button>
-                <Link href="/dashboard/products" className="block">
+                
+                {!isEdit && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleSaveDraft}
+                    disabled={isLoading}
+                    className="w-full"
+                  >
+                    Save as Draft
+                  </Button>
+                )}
+                
+                <Link href="/vendor/dashboard/products" className="block">
                   <Button type="button" variant="outline" className="w-full">
                     Cancel
                   </Button>
                 </Link>
+                
+                {hasUnsavedChanges && (
+                  <p className="text-xs text-amber-600 text-center">
+                    You have unsaved changes
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
