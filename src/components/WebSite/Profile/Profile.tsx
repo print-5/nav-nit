@@ -22,6 +22,7 @@ import Notifications from '@/components/WebSite/Profile/Notifications';
 import Security from '@/components/WebSite/Profile/Security';
 import SettingsTab from '@/components/WebSite/Profile/Settings';
 import type { UserProfile } from '@/components/WebSite/Profile/types';
+import { showSuccessToast, showErrorToast } from '@/lib/toast-utils';
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -78,13 +79,17 @@ const Profile = () => {
 
   const handlePasswordChange = () => {
     if (passwords.new !== passwords.confirm) {
-      alert('New passwords do not match');
+      showErrorToast('Password Mismatch', 'New passwords do not match.');
       return;
     }
-    // Here you would make an API call to change the password
-    setPasswords({ current: '', new: '', confirm: '' });
-    setShowPasswordChange(false);
-    alert('Password changed successfully');
+    try {
+      // Here you would make an API call to change the password
+      setPasswords({ current: '', new: '', confirm: '' });
+      setShowPasswordChange(false);
+      showSuccessToast('Password Changed', 'Your password has been updated successfully.');
+    } catch (error) {
+      showErrorToast('Password Change Failed', 'Unable to change password. Please try again.');
+    }
   };
 
   const tabs = [

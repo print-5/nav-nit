@@ -1,15 +1,16 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { use } from 'react';
 import AddProduct from '@/components/VendorDashboard/Products/AddEditProduct';
 
 interface EditProductPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function EditProductPage({ params }: EditProductPageProps) {
-  return <AddProduct productId={params.id} />;
+  const { id } = use(params);
+  return <AddProduct productId={id} isEdit={true} />;
 }
 

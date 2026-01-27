@@ -5,6 +5,7 @@ import { products } from '@/components/mockData/products';
 import { Heart, ShoppingCart, Share2, Trash2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
+import { showSuccessToast, showErrorToast } from '@/lib/toast-utils';
 
 interface WishlistItem {
   id: string;
@@ -30,24 +31,32 @@ const Wishlist = () => {
   };
 
   const addToCart = (productId: string, productName: string) => {
-    // Mock add to cart functionality
-    console.log(`Added ${productName} to cart`);
-    alert(`${productName} added to cart!`);
+    try {
+      // Mock add to cart functionality
+      console.log(`Added ${productName} to cart`);
+      showSuccessToast('Added to Cart!', `${productName} has been added to your cart.`);
+    } catch (error) {
+      showErrorToast('Failed to Add', 'Unable to add item to cart. Please try again.');
+    }
   };
 
   const shareProduct = (productId: string, productName: string) => {
-    // Mock share functionality
-    const url = `${window.location.origin}/products/${productId}`;
-    if (navigator.share) {
-      navigator.share({
-        title: productName,
-        text: `Check out this amazing product: ${productName}`,
-        url: url,
-      });
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(url);
-      alert('Product link copied to clipboard!');
+    try {
+      // Mock share functionality
+      const url = `${window.location.origin}/products/${productId}`;
+      if (navigator.share) {
+        navigator.share({
+          title: productName,
+          text: `Check out this amazing product: ${productName}`,
+          url: url,
+        });
+      } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(url);
+        showSuccessToast('Link Copied!', 'Product link has been copied to clipboard.');
+      }
+    } catch (error) {
+      showErrorToast('Share Failed', 'Unable to share product. Please try again.');
     }
   };
 

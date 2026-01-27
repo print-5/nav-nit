@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams } from 'next/navigation'
+import { use } from 'react'
 import { ArrowLeft, Package, Truck, CheckCircle, Clock, User, MapPin, CreditCard } from 'lucide-react'
 import Link from 'next/link'
 
@@ -39,14 +39,19 @@ interface Order {
   trackingNumber?: string
 }
 
-export default function OrderDetailPage() {
-  const params = useParams()
-  const orderId = params.id as string
+interface OrderDetailPageProps {
+  params: Promise<{
+    id: string
+  }>
+}
+
+export default function OrderDetailPage({ params }: OrderDetailPageProps) {
+  const { id } = use(params)
 
   // Mock data - replace with actual API call
   const order: Order = {
-    id: orderId,
-    orderNumber: `ORD-${orderId}`,
+    id,
+    orderNumber: `ORD-${id}`,
     date: '2024-01-20',
     status: 'processing',
     customer: {

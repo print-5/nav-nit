@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { X, Download, Eye } from "lucide-react"
 import { downloadInspectionReport } from "@/lib/pdfGenerator"
+import { showSuccessToast, showErrorToast } from '@/lib/toast-utils'
 
 interface PDFPreviewModalProps {
   isOpen: boolean
@@ -41,8 +42,10 @@ export default function PDFPreviewModal({ isOpen, onClose, reportData, reportId 
       if (result.success) {
         if ('method' in result && result.method === 'html') {
           console.log('Report opened in new window for printing')
+          showSuccessToast('Report Generated', 'Report opened in new window for printing.')
         } else if ('fileName' in result) {
           console.log('PDF downloaded:', result.fileName)
+          showSuccessToast('Download Complete', `PDF report has been downloaded: ${result.fileName}`)
         }
         // Close modal after successful download
         onClose()
@@ -50,7 +53,7 @@ export default function PDFPreviewModal({ isOpen, onClose, reportData, reportId 
     } catch (error) {
       console.error('Failed to generate report:', error)
       const errorMessage = error instanceof Error ? error.message : 'Failed to generate report. Please try again.'
-      alert(errorMessage)
+      showErrorToast('Download Failed', errorMessage)
     } finally {
       setIsDownloading(false)
     }
@@ -83,7 +86,7 @@ export default function PDFPreviewModal({ isOpen, onClose, reportData, reportId 
             <button
               onClick={handleDownload}
               disabled={isDownloading}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Download className="w-4 h-4" />
               {isDownloading ? 'Downloading...' : 'Download PDF'}

@@ -1,3 +1,4 @@
+import { use } from 'react'
 import { Breadcrumb } from '@/components/AdminDashboard/Breadcrumb/Breadcrumb'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card'
 import { Badge } from '@/components/UI/Badge'
@@ -6,9 +7,9 @@ import { ArrowLeft, Edit, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 
 interface ViewCategoryPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 // Mock category data for viewing
@@ -60,11 +61,12 @@ const mockCategoryData = {
 }
 
 export default function ViewCategoryPage({ params }: ViewCategoryPageProps) {
-  const category = mockCategoryData // In real app, fetch by params.id
+  const { id } = use(params)
+  const category = mockCategoryData // In real app, fetch by id
 
   const handleDelete = () => {
     if (confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
-      console.log('Deleting category:', params.id)
+      console.log('Deleting category:', id)
       // Implement delete logic here
     }
   }
